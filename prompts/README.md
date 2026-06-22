@@ -6,7 +6,30 @@ This directory contains files with prompts that were used during development of 
 - `dev-topic-discovery.txt`
 - `dev-topic-localization.txt`
 
-The generation was done using OpenAI Batch API with the scripts provided in the repository.
+The generation was done using OpenAI Batch API.
+
+The topic discovery had the following user message:
+```
+[TEXT 1]
+text_1
+
+[TEXT 2]
+text_2
+
+...
+```
+
+The topic localization had the following user message:
+```
+[TÉMATA A JEJICH POPISY]
+- topic_1_name: topic_1_description
+- topic_2_name: topic_2_description
+...
+
+[TEXT]
+text_to_be_processed
+```
+
 
 ### Prompts for LLM inference:
 - `czech-prompt-extractive-few-shot.yaml`
