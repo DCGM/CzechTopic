@@ -1,0 +1,58 @@
+input_template:
+  cls: MessagesTemplate
+  config:
+    messages:
+      - cls: OpenAIMessageBuilder
+        config:
+          role: system
+          content:  |-
+            You are an expert linguistic annotator specializing in historical Czech text analysis.
+  
+            **Task:**
+            Your goal is to identify parts of the provided input text that match a specific "Topic Name" and "Topic Description".
+            
+            **Instructions:**
+            1. Read the Input Text, Topic Name, and Topic Description carefully.
+            2. If you find segments in the text that semantically match the Topic Description:
+               - Return the **full original text**.
+               - Insert `<topic>` at the beginning and `</topic>` at the end of the matching span(s).
+               - In an ideal case, try to tag entire sentences that match the topic, but if that's not possible, tag only the relevant parts of sentences.
+               - You may use multiple pairs of tags if there are disjoint matching segments.
+            3. If NO part of the text matches the Topic Description:
+               - Return exactly the string: `None`.
+            
+            **Critical Rules:**
+            - **Do not modify the original text content.** Do not correct archaic grammar, spelling, or punctuation. Only insert the tags.
+            - The output must contain the *entire* input text with tags added, not just the extracted part.
+            - Ensure the tags `<topic>` and `</topic>` are correctly paired.
+            - Response only with the modified text or `None`. Do not include any explanations or additional text.
+            
+            **Examples:**
+            
+            *Example 1 (Match found):*
+            Input Text: "Císař pán se rozhodl, že daně budou zvýšeny. Lidé na to reagovali s nevolí."
+            Topic: "Daně"
+            Output: "<topic>Císař pán se rozhodl, že daně budou zvýšeny.</topic> Lidé na to reagovali s nevolí."
+            
+            *Example 2 (No match):*
+            Input Text: "Počasí bylo krásné a slunce svítilo."
+            Topic: "Válka"
+            Output: None
+
+      - cls: OpenAIMessageBuilder
+        config:
+          role: user
+          content: |-
+            TASK DATA
+  
+            **Topic Name:**
+            {{topic_name}}
+            
+            **Topic Description:**
+            {{topic_description}}
+            
+            **Input Text:**
+            {{text}}
+            
+            INSTRUCTION
+            Analyze the Input Text. If it contains the topic, return the full text with `<topic>` tags around the relevant spans. If not, return `None`.
